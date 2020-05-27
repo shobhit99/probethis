@@ -53,6 +53,9 @@ def work(timeout, ports, is_https):
                 url = "http://{}".format(domain)
                 r = requests.get(url, timeout=timeout, allow_redirects=False)
                 print_line(r, url)
+		url = "https://{}".format(domain)
+                r = requests.get(url, timeout=timeout, allow_redirects=False)
+                print_line(r, url)
             if ports:
                 for port in ports:
                     url = "http://{}:{}".format(domain,port)
