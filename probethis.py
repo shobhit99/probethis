@@ -25,7 +25,7 @@ def print_line(r, url):
         title = '' if title == [] else title[0][:40]
         scolor = lyellow if r.status_code == 404 else statuscolors[int(str(status)[0])]
         outputbuffer.append("{}\t{}\t{}\t{}".format(url,status,size,title))
-        print("{:<42}".format(url),scolor,"[{}]".format(status),white,redirect_value,cyan,"{:<9}".format(size),end,white,"{:<30}".format(title))
+        print("{:<42}".format(url),scolor,"[{}]".format(status),white,redirect_value,cyan,"{:<9}".format(size),end,white,"{:<30}".format(title),end)
     except Exception as e:
         pass
 
@@ -110,7 +110,7 @@ def main():
 
     sys.stdout.write(lgreen)
     print("Domains laoded : ", len(domains), white)
-    print("{:<42}".format('Domain'), " Status  Size       Title",white)
+    print("{:<42}".format('Domain'), " Status  Size       Title",end)
     # thread lists
     tlist = []
     for i in range(threadcount):
