@@ -18,15 +18,18 @@ outputbuffer = []
 
 def print_line(r, url):
     try:
+        url = url
+        r = r
         size = "{}B".format(len(r.text))
         status = r.status_code
-        scolor = lyellow if status == 404 else statuscolors[int(str(status)[0])]
+        redirect_value = "-> {}".format(r.headers['location']) if str(status)[0] == "3" else ''
         title = re.findall(r'<title>(.*?)</title>', r.text)
         title = '' if title == [] else title[0][:40]
-        outputbuffer.append("{}\t{}\t{}\t{}".format(url,status,size,title))
-        print("{:<42}".format(url),scolor,"[{}]".format(status),end,cyan,"{:<9}".format(size),end,"{:<30}".format(title))
+        scolor = lyellow if r.status_code == 404 else statuscolors[int(str(status)[0])]
+        outputbuffer.append("{}\t{}\t{}\t{}".format(url,status,size,title)) 
+        print("{:<42}".format(url),scolor,"[{}]".format(status),white,redirect_value,cyan,"{:<9}".format(size),end,white,"{:<30}".format(title))
     except Exception as e:
-        print(e)
+        pass
 
 def remove_proto(url):
     if url.startswith('https://'):
@@ -43,22 +46,22 @@ def work(timeout, ports, is_https):
             if is_https:
                 url = "https://{}".format(domain)
                 try:
-                    r = requests.get(url, timeout=timeout)
+                    r = requests.get(url, timeout=timeout, allow_redirects=False)
                 except requests.exceptions.SSLError:
                     url = "http://{}".format(domain)
-                    r = requests.get(url, timeout=timeout)
+                    r = requests.get(url, timeout=timeout, allow_redirects=False)
                     print_line(r, url)
             else:
                 url = "http://{}".format(domain)
-                r = requests.get(url, timeout=timeout)
+                r = requests.get(url, timeout=timeout, allow_redirects=False)
                 print_line(r, url)
             if ports:
                 for port in ports:
                     url = "http://{}:{}".format(domain,port)
-                    r = requests.get(url, timeout=timeout)
+                    r = requests.get(url, timeout=timeout, allow_redirects=False)
                     print_line(r, url)
         except Exception as e:
-            pass   
+            pass  
 
 def main():
     print(white,'''
