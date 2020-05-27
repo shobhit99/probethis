@@ -24,7 +24,7 @@ def print_line(r, url):
         title = re.findall(r'<title>(.*?)</title>', r.text)
         title = '' if title == [] else title[0][:40]
         scolor = lyellow if r.status_code == 404 else statuscolors[int(str(status)[0])]
-        outputbuffer.append("{}\t{}\t{}\t{}".format(url,status,size,title)) 
+        outputbuffer.append("{}\t{}\t{}\t{}".format(url,status,size,title))
         print("{:<42}".format(url),scolor,"[{}]".format(status),white,redirect_value,cyan,"{:<9}".format(size),end,white,"{:<30}".format(title))
     except Exception as e:
         pass
@@ -53,7 +53,7 @@ def work(timeout, ports, is_https):
                 url = "http://{}".format(domain)
                 r = requests.get(url, timeout=timeout, allow_redirects=False)
                 print_line(r, url)
-		url = "https://{}".format(domain)
+                url = "https://{}".format(domain)
                 r = requests.get(url, timeout=timeout, allow_redirects=False)
                 print_line(r, url)
             if ports:
@@ -110,7 +110,7 @@ def main():
 
     sys.stdout.write(lgreen)
     print("Domains laoded : ", len(domains), white)
-    print("{:<42}".format('Domain'), " Status  Size       Title",end)
+    print("{:<42}".format('Domain'), " Status  Size       Title",white)
     # thread lists
     tlist = []
     for i in range(threadcount):
