@@ -25,4 +25,4 @@ else:
     cyan = '\033[36m'
     end = '\033[0m'
 
-statuscolors = {1: cyan, 2: green, 4: yellow, 5: lred}
+statuscolors = {1: cyan, 2: green, 3: lgreen, 4: yellow, 5: lred}
