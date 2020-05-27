@@ -18,8 +18,6 @@ outputbuffer = []
 
 def print_line(r, url):
     try:
-        url = url
-        r = r
         size = "{}B".format(len(r.text))
         status = r.status_code
         redirect_value = "-> {}".format(r.headers['location']) if str(status)[0] == "3" else ''
