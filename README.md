@@ -27,7 +27,7 @@ cat domains.txt | probethis.py -s 200,403 -o valid.txt
 cat domains.txt | probethis.py -p 81,8000
 cat domains.txt | probethis.py -p small
 ```
-### Use threading [default 5]
+### Change threads [default 5]
 ```
 cat domains.txt | probethis.py -t 15
 ```
