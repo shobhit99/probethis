@@ -20,12 +20,13 @@ def print_line(r, url):
     try:
         size = "{}B".format(len(r.text))
         status = r.status_code
-        redirect_value = "-> {}".format(r.headers['location']) if str(status)[0] == "3" else ''
+        redirect_value = lgreen+"-> {}".format(r.headers['location']) if str(status)[0] == "3" else ''
         title = re.findall(r'<title>(.*?)</title>', r.text)
         title = '' if title == [] else title[0][:40]
         scolor = lyellow if r.status_code == 404 else statuscolors[int(str(status)[0])]
-        outputbuffer.append(url)
-        print("{:<42}".format(url),scolor,"[{}]".format(status),white,redirect_value,cyan,"{:<9}".format(size),end,white,"{:<30}".format(title),end)
+        outputbuffer.append("{}\t{}\t{}\t{}".format(url,status,size,title))
+        title = title if redirect_value == '' else redirect_value
+        print("{:<42}".format(url),scolor,"[{}]".format(status),cyan,"{:<9}".format(size),end,white,"{:<30}".format(title),end)
     except Exception as e:
         pass
 
