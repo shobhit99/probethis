@@ -111,7 +111,7 @@ def main():
 
     sys.stdout.write(lgreen)
     print("Domains laoded : ", len(domains), white)
-    print("{:<42}".format('Domain'), " Status  Size       Title",end)
+    print("{:<42}".format('Domain'), " Status  Size       Title / Redirect",end)
     # thread lists
     tlist = []
     for i in range(threadcount):
