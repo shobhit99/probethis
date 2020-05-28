@@ -2,7 +2,6 @@
 
 import requests
 import argparse
-import signal
 import sys
 import os
 import re
