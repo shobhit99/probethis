@@ -12,7 +12,6 @@ from colors import *
 psmall = ["81", "591", "2082", "2087", "2095", "2096", "3000", "8000", "8001", "8008", "8080", "8083", "8443", "8834", "8888"]
 plarge = ["81", "300", "591", "593", "832", "981", "1010", "1311", "2082", "2087", "2095", "2096", "2480", "3000", "3128", "3333", "4243", "4567", "4711", "4712", "4993", "5000", "5104", "5108", "5800", "6543", "7000", "7396", "7474", "8000", "8001", "8008", "8014", "8042", "8069", "8080", "8081", "8088", "8090", "8091", "8118", "8123", "8172", "8222", "8243", "8280", "8281", "8333", "8443", "8500", "8834", "8880", "8888", "8983", "9000", "9043", "9060", "9080", "9090", "9091", "9200", "9443", "9800", "9981", "12443", "16080", "18091", "18092", "20720", "28017"]
 domains = []
-working_domains = []
 outputbuffer = []
 headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36'}
 
@@ -20,21 +19,27 @@ def print_line(r, url, status_codes):
     try:
         size = "{}B".format(len(r.text))
         status = r.status_code
+        # set redirect value to location header if status code is 3xx else ''
         redirect_value = lgreen+"-> {}".format(r.headers['location']) if str(status)[0] == "3" else ''
         title = re.findall(r'<title>(.*?)</title>', r.text)
         title = '' if title == [] else title[0][:40]
+        # Use dark yellow for 404
         scolor = lyellow if r.status_code == 404 else statuscolors[int(str(status)[0])]
         if not status_codes:
+            # if custom status codes are not provided output all urls
             outputbuffer.append(url)
         else:
+            # output only links with provided status codes
             if status in status_codes:
                 outputbuffer.append(url)
+        # if status is 3xx then display location header value instead of title
         title = title if redirect_value == '' else redirect_value
         print("{:<42}".format(url),scolor,"[{}]".format(status),cyan,"{:<9}".format(size),end,white,"{:<30}".format(title),end)
     except Exception as e:
         pass
 
 def remove_proto(url):
+    # remove http and https from input to avoid confusion
     if url.startswith('https://'):
         url = url[8:]
     elif url.startswith('http://'):
@@ -46,15 +51,18 @@ def work(timeout, ports, is_https, status_codes):
         try:
             domain = domains.pop()
             domain = remove_proto(domain)
+            # if prefer https is selected
             if is_https:
                 url = "https://{}".format(domain)
                 try:
                     r = requests.get(url, timeout=timeout, allow_redirects=False, headers=headers)
+                # if https fails try http
                 except requests.exceptions.SSLError:
                     url = "http://{}".format(domain)
                     r = requests.get(url, timeout=timeout, allow_redirects=False, headers=headers)
                     print_line(r, url, status_codes)
             else:
+                # do both http and https
                 url = "http://{}".format(domain)
                 r = requests.get(url, timeout=timeout, allow_redirects=False, headers=headers)
                 print_line(r, url, status_codes)
@@ -62,6 +70,7 @@ def work(timeout, ports, is_https, status_codes):
                 r = requests.get(url, timeout=timeout, allow_redirects=False, headers=headers)
                 print_line(r, url, status_codes)
             if ports:
+                # scan for ports if specified
                 for port in ports:
                     url = "http://{}:{}".format(domain,port)
                     r = requests.get(url, timeout=timeout, allow_redirects=False, headers=headers)
