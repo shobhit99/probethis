@@ -17,7 +17,7 @@ working_domains = []
 outputbuffer = []
 headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36'}
 
-def print_line(r, url):
+def print_line(r, url, status_codes):
     try:
         size = "{}B".format(len(r.text))
         status = r.status_code
@@ -25,7 +25,11 @@ def print_line(r, url):
         title = re.findall(r'<title>(.*?)</title>', r.text)
         title = '' if title == [] else title[0][:40]
         scolor = lyellow if r.status_code == 404 else statuscolors[int(str(status)[0])]
-        outputbuffer.append(url)
+        if not status_codes:
+            outputbuffer.append(url)
+        else:
+            if status in status_codes:
+                outputbuffer.append(url)
         title = title if redirect_value == '' else redirect_value
         print("{:<42}".format(url),scolor,"[{}]".format(status),cyan,"{:<9}".format(size),end,white,"{:<30}".format(title),end)
     except Exception as e:
@@ -38,7 +42,7 @@ def remove_proto(url):
         url = url[7:]
     return url
 
-def work(timeout, ports, is_https):
+def work(timeout, ports, is_https, status_codes):
     while domains != []:
         try:
             domain = domains.pop()
@@ -50,21 +54,21 @@ def work(timeout, ports, is_https):
                 except requests.exceptions.SSLError:
                     url = "http://{}".format(domain)
                     r = requests.get(url, timeout=timeout, allow_redirects=False, headers=headers)
-                    print_line(r, url)
+                    print_line(r, url, status_codes)
             else:
                 url = "http://{}".format(domain)
                 r = requests.get(url, timeout=timeout, allow_redirects=False, headers=headers)
-                print_line(r, url)
+                print_line(r, url, status_codes)
                 url = "https://{}".format(domain)
                 r = requests.get(url, timeout=timeout, allow_redirects=False, headers=headers)
-                print_line(r, url)
+                print_line(r, url, status_codes)
             if ports:
                 for port in ports:
                     url = "http://{}:{}".format(domain,port)
                     r = requests.get(url, timeout=timeout, allow_redirects=False, headers=headers)
-                    print_line(r, url)
+                    print_line(r, url, status_codes)
         except Exception as e:
-            pass  
+            pass
 
 def main():
     print(white,'''
@@ -73,7 +77,7 @@ def main():
   /_)_/ (_(_)/_)</_<__/ /_<_/_)_
  /              ''',end,'''@github/shobhit99''',white,'''
 '              
-    ''')
+    ''',end)
     usage = '''
     Example:
 
@@ -83,8 +87,9 @@ def main():
     parser = argparse.ArgumentParser(description="Find working domains!", epilog=usage, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("-f", help="File with domain list", type=str, action="store")
     parser.add_argument("-t", help="No of threads", type=int, default=5, action="store")
-    parser.add_argument("-o", help="Output file name", type=str, action="store")
-    parser.add_argument("-p", help="Custom Ports seperated by space | small | large [small and large uses predefined list of ports]", type=str, nargs="*", action="store")
+    parser.add_argument("-o", help="Output file name, Saves all status codes by default unless codes specified using -s", type=str, action="store")
+    parser.add_argument("-s", help="Output urls with only specified status codes seperated by comma", type=str, action="store")
+    parser.add_argument("-p", help="[ Custom Ports seperated by comma | small | large ] small and large uses predefined list of ports", type=str, action="store")
     parser.add_argument("--https", help="Prefer HTTPS over http", action="store_true")
     parser.add_argument("--timeout", help="Timeout for requests", type=int, default=5, action="store")
     args = parser.parse_args()
@@ -92,9 +97,17 @@ def main():
     threadcount = args.t
     outputfile = args.o
     ports = args.p
+    status_codes = args.s
     is_https = args.https
     timeout = args.timeout
-
+    if ports:
+        ports = ports.split(",")
+    if status_codes:
+        if not outputfile:
+            sys.exit("Please provide output file name with -o")
+        else:
+            status_codes = status_codes.split(",")
+            status_codes = [int(i) for i in status_codes] 
     # if pipe input
     if not file:
         for d in sys.stdin:
@@ -105,7 +118,7 @@ def main():
         domains.extend(data.split('\n'))
     
     if ports:
-        if ports[0] == "small":
+        if ports[0] == "small": 
             ports = psmall
         elif ports[0] == "large":
             ports = plarge
@@ -116,14 +129,14 @@ def main():
     # thread lists
     tlist = []
     for i in range(threadcount):
-        t = threading.Thread(target=work, args=(timeout, ports, is_https))
+        t = threading.Thread(target=work, args=(timeout, ports, is_https, status_codes))
         t.start()
         tlist.append(t)
 
     try:
         # keep main thread running
         while True:
-            time.sleep(0.5)
+            time.sleep(2)
             if domains == []:
                 for t in tlist:
                     # if any thread is active
@@ -135,7 +148,7 @@ def main():
             # write ouput to file if provided
             with open(outputfile, "w") as f:
                 f.write("\n".join(d for d in outputbuffer))
-            print(end)
+            sys.stdout.write(end)
 
     except KeyboardInterrupt:
         print("Aborted by User")
@@ -144,7 +157,7 @@ def main():
             with open(outputfile, "w") as f:
                 f.write("\n".join(d for d in outputbuffer))
         os.kill(os.getpid(), 9)
-        print(end)
+        sys.stdout.write(end)
 
 if __name__ == '__main__':
     main()
