@@ -11,7 +11,7 @@ if checkplatform.startswith("Windows-10") and int(platform.version().split(".")[
     colors = True
     os.system('')
 if not colors:
-    end = green = yellow = red = white = cyan = bgreen = ''
+    end = green = yellow = red = white = cyan = bgreen = lgreen = lcyan = lyellow =  lred = blue = ''
 else:
     lgreen = '\033[32m'
     lcyan = '\033[96m'
