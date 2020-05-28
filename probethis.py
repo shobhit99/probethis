@@ -25,7 +25,7 @@ def print_line(r, url):
         title = re.findall(r'<title>(.*?)</title>', r.text)
         title = '' if title == [] else title[0][:40]
         scolor = lyellow if r.status_code == 404 else statuscolors[int(str(status)[0])]
-        outputbuffer.append("{}\t{}\t{}\t{}".format(url,status,size,title))
+        outputbuffer.append(url)
         title = title if redirect_value == '' else redirect_value
         print("{:<42}".format(url),scolor,"[{}]".format(status),cyan,"{:<9}".format(size),end,white,"{:<30}".format(title),end)
     except Exception as e:
