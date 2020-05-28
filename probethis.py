@@ -15,6 +15,7 @@ plarge = ["81", "300", "591", "593", "832", "981", "1010", "1311", "2082", "2087
 domains = []
 working_domains = []
 outputbuffer = []
+headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36'}
 
 def print_line(r, url):
     try:
@@ -45,22 +46,22 @@ def work(timeout, ports, is_https):
             if is_https:
                 url = "https://{}".format(domain)
                 try:
-                    r = requests.get(url, timeout=timeout, allow_redirects=False)
+                    r = requests.get(url, timeout=timeout, allow_redirects=False, headers=headers)
                 except requests.exceptions.SSLError:
                     url = "http://{}".format(domain)
-                    r = requests.get(url, timeout=timeout, allow_redirects=False)
+                    r = requests.get(url, timeout=timeout, allow_redirects=False, headers=headers)
                     print_line(r, url)
             else:
                 url = "http://{}".format(domain)
-                r = requests.get(url, timeout=timeout, allow_redirects=False)
+                r = requests.get(url, timeout=timeout, allow_redirects=False, headers=headers)
                 print_line(r, url)
                 url = "https://{}".format(domain)
-                r = requests.get(url, timeout=timeout, allow_redirects=False)
+                r = requests.get(url, timeout=timeout, allow_redirects=False, headers=headers)
                 print_line(r, url)
             if ports:
                 for port in ports:
                     url = "http://{}:{}".format(domain,port)
-                    r = requests.get(url, timeout=timeout, allow_redirects=False)
+                    r = requests.get(url, timeout=timeout, allow_redirects=False, headers=headers)
                     print_line(r, url)
         except Exception as e:
             pass  
