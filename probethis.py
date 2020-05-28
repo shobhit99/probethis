@@ -82,7 +82,8 @@ def main():
     Example:
 
     probethis.py -f domains.txt -t 5 -o output.txt
-    probethis.py -f domains.txt -p [ 81 8080 3000 | small | large]
+    probethis.py -f domains.txt -p [ 81,8080,3000 | small | large]
+    cat domains.txt | probethis.py -s 200,403,401 -o filtered.txt
 	'''
     parser = argparse.ArgumentParser(description="Find working domains!", epilog=usage, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("-f", help="File with domain list", type=str, action="store")
