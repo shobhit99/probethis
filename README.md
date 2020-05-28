@@ -18,6 +18,15 @@ probethis.py -f domains.txt
 ```
 cat domains.txt | probethis.py -o valid.txt
 ```
+### Output urls with only specified status codes 
+```
+cat domains.txt | probethis.py -s 200,403 -o valid.txt
+```
+### Scan for custom / predefined ports
+```
+cat domains.txt | probethis.py -p 81,8000
+cat domains.txt | probethis.py -p small
+```
 ### Use threading [default 5]
 ```
 cat domains.txt | probethis.py -t 15
