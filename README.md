@@ -7,7 +7,7 @@ finds active domains from list of subdomains with status code, size and title
 ```
 ▶ cat domains.txt | probethis.py
 ▶ probethis.py -f domain-list.txt
-▶ assetfinder.py --subs-only example.com | probethis.py
+▶ assetfinder --subs-only example.com | probethis.py
 ```
 ### Input file
 list of subdomains as input from file
