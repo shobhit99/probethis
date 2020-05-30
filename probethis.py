@@ -21,7 +21,7 @@ def print_line(r, url, status_codes):
         status = r.status_code
         # set redirect value to location header if status code is 3xx else ''
         redirect_value = lgreen+"-> {}".format(r.headers['location']) if str(status)[0] == "3" else ''
-        title = re.findall(r'<title>(.*?)</title>', r.text)
+        title = re.findall(r'<title[^>]*>(.*?)</title>', r.text)
         title = '' if title == [] else title[0][:40]
         # Use dark yellow for 404
         scolor = lyellow if r.status_code == 404 else statuscolors[int(str(status)[0])]
