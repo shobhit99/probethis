@@ -39,3 +39,5 @@ cat domains.txt | probethis.py --timeout=15
 ```
 cat domains.txt | probethis.py --https
 ```
+
+This tool was inspired from [@tomnomnom's](https://github.com/tomnomnom) httprobe, small and large port numbers were taken from httprobe
